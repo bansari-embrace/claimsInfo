@@ -2,21 +2,30 @@
 
 A personal, single-page reference tool for Claims applications, database info, wiki links, and ticket tracking.
 
-- Pure static HTML/CSS/JS — no backend, no build step.
-- Seed data for each tab lives in its own file under `data/` (`projects.json`, `dbinfo.json`, `wikilinks.json`, `tickets.json`) — nothing is hard-coded in the HTML.
-- Your edits (add/edit/delete) are saved on top of that seed in the browser's `localStorage` (per device/browser).
-- Each tab has **Add** (also used to Edit — click the pencil icon on a row), a delete (trash) icon, and **Export JSON** / **Export CSV** buttons.
-- **Delete is non-destructive**: it only hides the row from the table. The row stays in local storage and in `Export JSON` output, so nothing is actually lost.
+- Pure static HTML/CSS/JS — no build step, hosted on GitHub Pages.
+- Data for each tab lives in its own file under `data/` (`projects.json`, `dbinfo.json`, `wikilinks.json`, `tickets.json`) — nothing is hard-coded in the HTML.
+- **Every Add/Edit/Delete is committed straight back to those `data/*.json` files on GitHub** via the GitHub API, so anyone who opens the page sees the same shared data — it isn't stuck in one browser.
+- Each tab has **Add** (also used to Edit — click the pencil icon on a row), a delete (trash) icon, search, sortable columns, pagination (50 rows per page by default), and **Export JSON** / **Export CSV** buttons for manual backups.
+- **Delete is non-destructive**: it only hides the row from the table. The row stays in `data/*.json` (and in `Export JSON` output), so nothing is actually lost.
+
+## One-time setup: connect GitHub so saving works
+
+Click the gear icon in the top bar and set:
+1. **Owner/Repo** — `bansari-embrace/claimsInfo` (prefilled)
+2. **Branch** — `main` (prefilled)
+3. **Personal Access Token** — create a [fine-grained PAT](https://github.com/settings/personal-access-tokens/new) scoped to just this repo, with **Contents: Read and write** permission, and paste it in.
+
+The token is stored only in that browser's `localStorage` — it's never committed or sent anywhere except directly to GitHub's API. Do this once per device/browser you use to edit. Without it, the page is still fully readable, but edits won't save anywhere.
 
 ## Run locally
 
-Because the page loads `data/*.json` with `fetch()`, opening `index.html` by double-clicking it (`file://`) will fail to load the seed data (browsers block `fetch` of local files that way). Serve the folder instead, e.g.:
+Because the page loads `data/*.json` with `fetch()`, opening `index.html` by double-clicking it (`file://`) will fail to load the data (browsers block `fetch` of local files that way). Serve the folder instead, e.g.:
 
 ```
 npx serve .
 ```
 
-then open the printed `http://localhost:...` URL. (If you skip this, the page still works — it just starts empty until you Add rows, and shows a small warning banner.)
+then open the printed `http://localhost:...` URL.
 
 ## Host on GitHub Pages
 
@@ -30,5 +39,5 @@ Remaining step (do this on GitHub, one time):
 
 ## Notes
 
-- Since edits live in `localStorage`, they are **per browser/device** — they won't sync between your work laptop and the hosted site automatically. Use **Export JSON** on one device, and replace the matching file in `data/` with it (then commit + push), to carry changes over to the hosted site for everyone.
+- Saving writes a new commit to this repo, so GitHub Pages takes a short moment to rebuild after an edit before other people see it.
 - Seeded with the Claims applications, DB info, and tickets already gathered in `data/*.json` — edit or delete anything that doesn't match your actual environment, or edit those JSON files directly.
