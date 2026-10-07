@@ -138,7 +138,15 @@
   }
 
   function blockNoAccess(){
-    alert("You don't have write permission.\n\nConnect a GitHub token first (click the gear icon, top right) to add, edit, or delete rows.");
+    document.getElementById("noAccessOverlay").classList.add("open");
+  }
+
+  function closeNoAccess(){
+    document.getElementById("noAccessOverlay").classList.remove("open");
+  }
+
+  function wireNoAccessModal(){
+    document.getElementById("noAccessOk").addEventListener("click", closeNoAccess);
   }
 
   function updateConnPill(){
@@ -534,7 +542,7 @@
   }
 
   document.addEventListener("keydown", function(e){
-    if (e.key === "Escape"){ closeFormModal(); closeConfirm(); closeSettings(); }
+    if (e.key === "Escape"){ closeFormModal(); closeConfirm(); closeSettings(); closeNoAccess(); }
   });
 
   // ---------- delegation ----------
@@ -647,6 +655,7 @@
     wireSearch();
     wireFormModal();
     wireConfirmModal();
+    wireNoAccessModal();
     wireSettings();
     if (!hasWriteAccess()){
       TABS.forEach(function(t){ setSyncStatus(t.id, "offline"); });
