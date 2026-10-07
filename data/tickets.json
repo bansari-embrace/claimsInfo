@@ -4,7 +4,6 @@
     "title": "CRM Enter Queue alert",
     "status": "Done",
     "sprint": "",
-    "owner": "Me",
     "assignee": "Bilal Ansari",
     "notes": "Deployed to Production; thresholds tuned there"
   },
@@ -13,8 +12,7 @@
     "title": "Alert for Automated Emails going into Dead Letter Queue",
     "status": "Done",
     "sprint": "",
-    "owner": "Me",
-    "assignee": "",
+    "assignee": "Me",
     "notes": "Fire/Resolve verified end to end"
   },
   {
@@ -22,7 +20,7 @@
     "title": "Azure OpenAI token usage monitors",
     "status": "Done",
     "sprint": "",
-    "owner": "Me",
+    "assignee": "Me",
     "notes": "9 alerts across Dev, Research, Prod"
   },
   {
@@ -30,7 +28,7 @@
     "title": "Migrate Service Bus DLQ monitors (Datadog -> Azure)",
     "status": "In Progress",
     "sprint": "",
-    "owner": "Me",
+    "assignee": "Me",
     "notes": "General (Prod) + Lower Env (RC/Dev) done; CrmSync (Prod) remaining"
   },
   {
@@ -38,7 +36,7 @@
     "title": "test",
     "status": "Done",
     "sprint": "",
-    "owner": "",
+    "assignee": "",
     "notes": "",
     "_deleted": true
   }
