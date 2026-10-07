@@ -1,0 +1,12 @@
+[
+  {"name":"Apollo", "repo":"AIApplications", "type":"Azure Container App (Python) + InRule", "description":"Backend AI/rules auto-adjudication engine"},
+  {"name":"Ares", "repo":"AIApplications", "type":"Azure Container App (Python)", "description":"Invoice fraud detection + data extraction"},
+  {"name":"Athena", "repo":"Claim.Automation / AIApplications / Claim API", "type":"Azure Container App + API", "description":"AI-assisted medical history coding"},
+  {"name":"Atlas", "repo":"Claim.Automation", "type":"Azure Container App (C#)", "description":"Claims email automation (classify + auto-respond)"},
+  {"name":"WWF", "repo":"epi.WWF", "type":"On-Prem Windows Service", "description":"Workflow orchestration (Poller/Runner/Resumer)"},
+  {"name":"InRule", "repo":"epi.Management / epi.Business", "type":"Azure App Service (API)", "description":"Business rules engine (Management + Business API)"},
+  {"name":"Claims Workspace", "repo":"epi.ClaimsMgmt", "type":"On-Prem IIS (Web UI)", "description":"Adjuster UI for claim review and coding"},
+  {"name":"epi.Ocr", "repo":"epi.Ocr", "type":"Azure Function App", "description":"Document intake + OCR pipeline (EpiDocumentProcessor)"},
+  {"name":"Doc Viewer", "repo":"epi.DocViewer", "type":"On-Prem IIS (Web UI)", "description":"Manual document classification and review"},
+  {"name":"epi.Crm", "repo":"epi.Crm", "type":"Azure App Service (API)", "description":"Gateway API to Microsoft Dynamics CRM"}
+]

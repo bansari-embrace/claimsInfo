@@ -1,0 +1,14 @@
+{
+  "name": "claims-hub-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Backend CRUD API for Claims Reference Hub",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}
