@@ -39,5 +39,13 @@
     "assignee": "",
     "notes": "",
     "_deleted": true
+  },
+  {
+    "ticketId": "CLAIM-1595",
+    "title": "Migrate Claims MH DataDog Monitors to Azure",
+    "status": "To Do",
+    "sprint": "",
+    "assignee": "Bilal",
+    "notes": "Monitor Name - Datadog Source\n[ ] MH-OCR (Dev) - Exception alert, App Insights custom metric\n[ ] MH-OCR_RC - Exception alert, App Insights custom metric\n[ ] MH-GPT (Dev) - Exception alert, App Insights custom metric\n[ ] MH-GPT_Prod - Exception alert, App Insights custom metric\n[ ] MH-GPT_RC - Exception alert, App Insights custom metric\n[ ] MH-PDF (Dev) - Exception alert, App Insights custom metric\n[ ] MH-PDF_Prod - Exception alert, App Insights custom metric\n[ ] MH-PDF_RC - Exception alert, App Insights custom metric\n[ ] MH-Diagnosis (Dev) - Exception alert, App Insights custom metric\n[ ] MH-Diagnosis_Prod - Exception alert, App Insights custom metric\n[ ] MH-Diagnosis_RC - Exception alert, App Insights custom metric"
   }
 ]
