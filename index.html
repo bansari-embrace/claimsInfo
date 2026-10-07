@@ -9,65 +9,93 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
   :root{
-    --bg:#f3f4f7; --surface:#ffffff; --surface-2:#eceef2; --fg:#1b2030; --muted:#656d7e;
-    --border:#dde1e8; --accent:#4f46e5; --accent-fg:#ffffff; --accent-soft:#ece9fd;
+    --bg:#f3f4f7; --bg-grad:#eef0fb; --surface:#ffffff; --surface-2:#eceef2; --fg:#1b2030; --muted:#656d7e;
+    --border:#dde1e8; --accent:#4f46e5; --accent-2:#7c3aed; --accent-fg:#ffffff; --accent-soft:#ece9fd;
     --good:#1f8a53; --good-soft:#e2f6ea; --warn:#b4650a; --warn-soft:#fdecd6;
     --bad:#c23b3b; --bad-soft:#fbe4e4; --code-bg:#eef0f4;
+    --shadow:0 1px 2px rgba(20,20,40,.04), 0 10px 28px -16px rgba(20,20,40,.18);
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --bg:#14161c; --surface:#1c1f29; --surface-2:#242836; --fg:#e7e9ef; --muted:#9298a8;
-      --border:#343a4a; --accent:#8b85f5; --accent-fg:#161327; --accent-soft:#2a2650;
+      --bg:#14161c; --bg-grad:#171a2a; --surface:#1c1f29; --surface-2:#242836; --fg:#e7e9ef; --muted:#9298a8;
+      --border:#343a4a; --accent:#8b85f5; --accent-2:#a78bfa; --accent-fg:#161327; --accent-soft:#2a2650;
       --good:#5bc98a; --good-soft:#163424; --warn:#e0a855; --warn-soft:#3a2a10;
       --bad:#e38b86; --bad-soft:#3a1c1a; --code-bg:#20242f; color-scheme:dark;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px -16px rgba(0,0,0,.6);
     }
   }
   :root[data-theme="dark"]{
-    --bg:#14161c; --surface:#1c1f29; --surface-2:#242836; --fg:#e7e9ef; --muted:#9298a8;
-    --border:#343a4a; --accent:#8b85f5; --accent-fg:#161327; --accent-soft:#2a2650;
+    --bg:#14161c; --bg-grad:#171a2a; --surface:#1c1f29; --surface-2:#242836; --fg:#e7e9ef; --muted:#9298a8;
+    --border:#343a4a; --accent:#8b85f5; --accent-2:#a78bfa; --accent-fg:#161327; --accent-soft:#2a2650;
     --good:#5bc98a; --good-soft:#163424; --warn:#e0a855; --warn-soft:#3a2a10;
     --bad:#e38b86; --bad-soft:#3a1c1a; --code-bg:#20242f; color-scheme:dark;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px -16px rgba(0,0,0,.6);
   }
   *{box-sizing:border-box}
-  html,body{margin:0;background:var(--bg);}
-  body{color:var(--fg);font-family:"Work Sans",system-ui,sans-serif;line-height:1.5;}
-  .app{max-width:1060px;margin:0 auto;padding:20px 18px 60px;}
+  html,body{margin:0;}
+  body{
+    color:var(--fg);font-family:"Work Sans",system-ui,sans-serif;line-height:1.5;
+    background:
+      radial-gradient(900px 380px at 10% -10%, var(--bg-grad), transparent 60%),
+      radial-gradient(700px 320px at 110% 0%, var(--accent-soft), transparent 55%),
+      var(--bg);
+    min-height:100vh;
+  }
+  .app{max-width:1080px;margin:0 auto;padding:26px 18px 60px;}
 
   h1,h2,h3{font-family:"Manrope",system-ui,sans-serif;letter-spacing:-.01em;}
   code,.mono{font-family:"JetBrains Mono",ui-monospace,monospace;}
 
-  header.top{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:18px;}
-  header.top h1{font-size:1.5rem;margin:0;}
-  .conn-pill{font-size:.72rem;font-weight:600;padding:.3rem .65rem;border-radius:999px;border:1px solid var(--border);color:var(--muted);background:var(--surface-2);}
+  header.top{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:22px;}
+  header.top h1{font-size:1.6rem;margin:0 0 4px;background:linear-gradient(90deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  header.top .tagline{color:var(--muted);font-size:.86rem;}
+  .conn-pill{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:600;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);color:var(--muted);background:var(--surface);box-shadow:var(--shadow);white-space:nowrap;}
+  .conn-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--good);}
 
-  nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:20px;overflow-x:auto;}
-  nav.tabs button{font:inherit;font-family:"Manrope",sans-serif;font-weight:600;font-size:.88rem;background:none;border:none;color:var(--muted);padding:.65rem 1rem;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;}
-  nav.tabs button:hover{color:var(--fg);}
-  nav.tabs button.active{color:var(--accent);border-bottom-color:var(--accent);}
+  #fetchWarn{display:none;background:var(--warn-soft);color:var(--warn);border:1px solid var(--warn);border-radius:10px;padding:10px 14px;font-size:.82rem;margin-bottom:16px;}
+  #fetchWarn.show{display:block;}
+
+  nav.tabs{display:flex;gap:6px;margin-bottom:22px;overflow-x:auto;padding-bottom:2px;}
+  nav.tabs button{display:inline-flex;align-items:center;gap:7px;font:inherit;font-family:"Manrope",sans-serif;font-weight:700;font-size:.85rem;background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:.55rem 1rem;border-radius:999px;cursor:pointer;white-space:nowrap;transition:all .12s ease;box-shadow:var(--shadow);}
+  nav.tabs button svg{width:15px;height:15px;opacity:.75;}
+  nav.tabs button:hover{color:var(--fg);border-color:var(--accent);}
+  nav.tabs button.active{color:var(--accent-fg);background:linear-gradient(135deg,var(--accent),var(--accent-2));border-color:transparent;}
+  nav.tabs button.active svg{opacity:1;}
 
   .panel{display:none;}
-  .panel.active{display:block;}
+  .panel.active{display:block;animation:fadein .15s ease;}
+  @keyframes fadein{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
 
   .panel-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;}
-  .panel-head h2{font-size:1.05rem;margin:0;}
+  .panel-head h2{font-size:1.1rem;margin:0;}
   .panel-head .sub{color:var(--muted);font-size:.84rem;margin-top:2px;}
   .actions{display:flex;gap:8px;flex-wrap:wrap;}
 
-  button.btn{font:inherit;font-family:"Manrope",sans-serif;font-weight:600;font-size:.82rem;border-radius:7px;padding:.5rem .85rem;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--fg);}
-  button.btn:hover{border-color:var(--accent);color:var(--accent);}
-  button.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-fg);}
-  button.btn.primary:hover{opacity:.92;color:var(--accent-fg);}
+  button.btn{display:inline-flex;align-items:center;gap:6px;font:inherit;font-family:"Manrope",sans-serif;font-weight:600;font-size:.82rem;border-radius:8px;padding:.5rem .85rem;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--fg);transition:all .12s ease;}
+  button.btn svg{width:14px;height:14px;}
+  button.btn:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px);box-shadow:var(--shadow);}
+  button.btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));border-color:transparent;color:var(--accent-fg);box-shadow:var(--shadow);}
+  button.btn.primary:hover{opacity:.93;color:var(--accent-fg);}
+  button.btn.ghost{border-color:transparent;background:none;color:var(--muted);box-shadow:none;}
+  button.btn.ghost:hover{color:var(--accent);transform:none;box-shadow:none;}
 
-  .table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:10px;background:var(--surface);}
+  .table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:12px;background:var(--surface);box-shadow:var(--shadow);}
   table{border-collapse:collapse;width:100%;min-width:560px;font-size:.85rem;}
-  th,td{text-align:left;padding:.6rem .75rem;border-bottom:1px solid var(--border);vertical-align:top;min-width:0;}
+  th,td{text-align:left;padding:.65rem .8rem;border-bottom:1px solid var(--border);vertical-align:top;min-width:0;}
   th{background:var(--surface-2);font-size:.7rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700;white-space:nowrap;}
+  th:first-child{border-top-left-radius:12px;}
+  th:last-child{border-top-right-radius:12px;}
+  tbody tr{transition:background .1s ease;}
+  tbody tr:hover{background:var(--surface-2);}
   tr:last-child td{border-bottom:none;}
   td.wrap-cell{max-width:260px;white-space:normal;word-break:break-word;}
   td a{color:var(--accent);text-decoration:none;}
   td a:hover{text-decoration:underline;}
-  .row-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.9rem;padding:2px 6px;border-radius:5px;}
-  .row-del:hover{color:var(--bad);background:var(--bad-soft);}
+  td.row-actions{white-space:nowrap;width:1%;}
+  .icon-btn{background:none;border:none;color:var(--muted);cursor:pointer;padding:5px;border-radius:6px;display:inline-flex;}
+  .icon-btn svg{width:15px;height:15px;}
+  .icon-btn:hover{background:var(--accent-soft);color:var(--accent);}
+  .icon-btn.danger:hover{color:var(--bad);background:var(--bad-soft);}
 
   .chip{display:inline-block;font-size:.74rem;font-weight:600;padding:.18rem .55rem;border-radius:999px;}
   .chip.status-done{background:var(--good-soft);color:var(--good);}
@@ -75,19 +103,22 @@
   .chip.status-blocked{background:var(--bad-soft);color:var(--bad);}
   .chip.status-default{background:var(--surface-2);color:var(--muted);}
 
-  .add-form{display:none;border:1px solid var(--border);border-radius:10px;background:var(--surface);padding:14px;margin-bottom:14px;}
+  .add-form{display:none;border:1px solid var(--border);border-radius:12px;background:var(--surface);padding:16px;margin-bottom:14px;box-shadow:var(--shadow);}
   .add-form.open{display:block;}
-  .add-form .fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:10px;}
+  .add-form .form-title{font-family:"Manrope",sans-serif;font-weight:700;font-size:.85rem;margin-bottom:10px;color:var(--accent);}
+  .add-form .fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px;}
   .add-form label{display:block;font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;margin-bottom:4px;}
-  .add-form input,.add-form select,.add-form textarea{width:100%;font:inherit;font-size:.85rem;padding:.45rem .55rem;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--fg);}
+  .add-form input,.add-form select,.add-form textarea{width:100%;font:inherit;font-size:.85rem;padding:.45rem .55rem;border-radius:7px;border:1px solid var(--border);background:var(--bg);color:var(--fg);}
+  .add-form input:focus,.add-form select:focus,.add-form textarea:focus{outline:2px solid var(--accent-soft);border-color:var(--accent);}
   .add-form textarea{resize:vertical;min-height:2.2rem;}
 
-  .empty-state{padding:30px 16px;text-align:center;color:var(--muted);font-size:.88rem;}
+  .empty-state{padding:34px 16px;text-align:center;color:var(--muted);font-size:.86rem;}
+  .empty-state svg{width:28px;height:28px;margin-bottom:8px;opacity:.5;}
 
   footer.note{margin-top:30px;padding-top:14px;border-top:1px solid var(--border);color:var(--muted);font-size:.78rem;}
 
   @media (max-width:520px){
-    header.top h1{font-size:1.25rem;}
+    header.top h1{font-size:1.3rem;}
     .app{padding-inline:14px;}
   }
 </style>
@@ -96,132 +127,22 @@
 <div class="app">
 
   <header class="top">
-    <h1>Claims Reference Hub</h1>
-    <span class="conn-pill">Saved in this browser</span>
+    <div>
+      <h1>Claims Reference Hub</h1>
+      <div class="tagline">Projects, databases, links and tickets &mdash; one place for all of it</div>
+    </div>
+    <span class="conn-pill"><span class="dot"></span>Data saved on this device</span>
   </header>
 
-  <nav class="tabs" id="tabNav">
-    <button data-tab="projects" class="active">Projects</button>
-    <button data-tab="dbinfo">Database Info</button>
-    <button data-tab="wikilinks">Wiki &amp; Links</button>
-    <button data-tab="tickets">Tickets</button>
-  </nav>
+  <div id="fetchWarn"></div>
 
-  <section class="panel active" id="panel-projects">
-    <div class="panel-head">
-      <div><h2>Claims Applications</h2><div class="sub">Every application/repo in the Claims ecosystem</div></div>
-      <div class="actions">
-        <button class="btn" data-export="projects">Export CSV</button>
-        <button class="btn primary" data-toggle-form="projects">+ Add</button>
-      </div>
-    </div>
-    <div class="add-form" id="form-projects">
-      <div class="fields">
-        <div><label>Name</label><input data-f="name" placeholder="e.g. Apollo"></div>
-        <div><label>Repo</label><input data-f="repo" placeholder="e.g. AIApplications"></div>
-        <div><label>Type</label><input data-f="type" placeholder="e.g. Azure Container App"></div>
-        <div><label>Description</label><input data-f="description" placeholder="One line"></div>
-      </div>
-      <button class="btn primary" data-save="projects">Save</button>
-      <button class="btn" data-cancel="projects">Cancel</button>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Name</th><th>Repo</th><th>Type</th><th>Description</th><th></th></tr></thead>
-        <tbody id="rows-projects"></tbody>
-      </table>
-    </div>
-  </section>
+  <nav class="tabs" id="tabNav"></nav>
+  <div id="panels"></div>
 
-  <section class="panel" id="panel-dbinfo">
-    <div class="panel-head">
-      <div><h2>Database Info</h2><div class="sub">Database type, associated application, and auth mechanism per environment</div></div>
-      <div class="actions">
-        <button class="btn" data-export="dbinfo">Export CSV</button>
-        <button class="btn primary" data-toggle-form="dbinfo">+ Add</button>
-      </div>
-    </div>
-    <div class="add-form" id="form-dbinfo">
-      <div class="fields">
-        <div><label>Application</label><input data-f="application" placeholder="e.g. CRM"></div>
-        <div><label>DB Type</label><input data-f="dbType" placeholder="e.g. SQL Server"></div>
-        <div><label>Authentication</label><input data-f="auth" placeholder="e.g. Windows Authentication"></div>
-        <div><label>Dev</label><input data-f="dev" placeholder="server name"></div>
-        <div><label>RC</label><input data-f="rc" placeholder="server name"></div>
-        <div><label>Prod</label><input data-f="prod" placeholder="server name"></div>
-      </div>
-      <button class="btn primary" data-save="dbinfo">Save</button>
-      <button class="btn" data-cancel="dbinfo">Cancel</button>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Application</th><th>DB Type</th><th>Authentication</th><th>Dev</th><th>RC</th><th>Prod</th><th></th></tr></thead>
-        <tbody id="rows-dbinfo"></tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="panel" id="panel-wikilinks">
-    <div class="panel-head">
-      <div><h2>Wiki &amp; Reference Links</h2><div class="sub">Repos, KAD docs, portals &mdash; anything worth bookmarking</div></div>
-      <div class="actions">
-        <button class="btn" data-export="wikilinks">Export CSV</button>
-        <button class="btn primary" data-toggle-form="wikilinks">+ Add</button>
-      </div>
-    </div>
-    <div class="add-form" id="form-wikilinks">
-      <div class="fields">
-        <div><label>Title</label><input data-f="title" placeholder="e.g. epi.WWF repo"></div>
-        <div><label>URL</label><input data-f="url" placeholder="https://&hellip;"></div>
-        <div><label>Category</label><input data-f="category" placeholder="e.g. Repo / KAD / Portal"></div>
-      </div>
-      <button class="btn primary" data-save="wikilinks">Save</button>
-      <button class="btn" data-cancel="wikilinks">Cancel</button>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Title</th><th>Link</th><th>Category</th><th></th></tr></thead>
-        <tbody id="rows-wikilinks"></tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="panel" id="panel-tickets">
-    <div class="panel-head">
-      <div><h2>Tickets</h2><div class="sub">What I'm working on and what my teammates are working on</div></div>
-      <div class="actions">
-        <button class="btn" data-export="tickets">Export CSV</button>
-        <button class="btn primary" data-toggle-form="tickets">+ Add</button>
-      </div>
-    </div>
-    <div class="add-form" id="form-tickets">
-      <div class="fields">
-        <div><label>Ticket ID</label><input data-f="ticketId" placeholder="e.g. CLAIM-1598"></div>
-        <div><label>Title</label><input data-f="title" placeholder="Short title"></div>
-        <div><label>Status</label>
-          <select data-f="status">
-            <option>Done</option>
-            <option>Ready for Testing</option>
-            <option selected>In Progress</option>
-            <option>Blocked</option>
-            <option>To Do</option>
-          </select>
-        </div>
-        <div><label>Owner</label><input data-f="owner" placeholder="Me / teammate name"></div>
-        <div><label>Notes</label><input data-f="notes" placeholder="Short status note"></div>
-      </div>
-      <button class="btn primary" data-save="tickets">Save</button>
-      <button class="btn" data-cancel="tickets">Cancel</button>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Ticket</th><th>Title</th><th>Status</th><th>Owner</th><th>Notes</th><th></th></tr></thead>
-        <tbody id="rows-tickets"></tbody>
-      </table>
-    </div>
-  </section>
-
-  <footer class="note">Data is saved in this browser's local storage (per device/browser). Use "Export CSV" to back up or move data between machines.</footer>
+  <footer class="note">
+    Seed data lives in per-tab files under <code class="mono">data/*.json</code>. Your edits are kept in this browser's local storage layered on top of that seed.
+    Deleting a row hides it from view but keeps it in the saved data &mdash; use <strong>Export JSON</strong> to pull the full file (including hidden rows) back out.
+  </footer>
 
 </div>
 
@@ -231,57 +152,87 @@
 
   var STORAGE_PREFIX = "claimsHub.";
 
-  var SCHEMAS = {
-    projects: { cols: ["name","repo","type","description"], label: "name" },
-    dbinfo:   { cols: ["application","dbType","auth","dev","rc","prod"], label: "application" },
-    wikilinks:{ cols: ["title","url","category"], label: "title" },
-    tickets:  { cols: ["ticketId","title","status","owner","notes"], label: "ticketId" }
+  var ICONS = {
+    projects: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
+    dbinfo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5"/><path d="M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3"/></svg>',
+    wikilinks: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+    tickets: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>',
+    plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+    download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+    edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>',
+    trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+    inbox: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>'
   };
 
-  var DEFAULTS = {
-    projects: [
-      {name:"Apollo", repo:"AIApplications", type:"Azure Container App (Python) + InRule", description:"Backend AI/rules auto-adjudication engine"},
-      {name:"Ares", repo:"AIApplications", type:"Azure Container App (Python)", description:"Invoice fraud detection + data extraction"},
-      {name:"Athena", repo:"Claim.Automation / AIApplications / Claim API", type:"Azure Container App + API", description:"AI-assisted medical history coding"},
-      {name:"Atlas", repo:"Claim.Automation", type:"Azure Container App (C#)", description:"Claims email automation (classify + auto-respond)"},
-      {name:"WWF", repo:"epi.WWF", type:"On-Prem Windows Service", description:"Workflow orchestration (Poller/Runner/Resumer)"},
-      {name:"InRule", repo:"epi.Management / epi.Business", type:"Azure App Service (API)", description:"Business rules engine (Management + Business API)"},
-      {name:"Claims Workspace", repo:"epi.ClaimsMgmt", type:"On-Prem IIS (Web UI)", description:"Adjuster UI for claim review and coding"},
-      {name:"epi.Ocr", repo:"epi.Ocr", type:"Azure Function App", description:"Document intake + OCR pipeline (EpiDocumentProcessor)"},
-      {name:"Doc Viewer", repo:"epi.DocViewer", type:"On-Prem IIS (Web UI)", description:"Manual document classification and review"},
-      {name:"epi.Crm", repo:"epi.Crm", type:"Azure App Service (API)", description:"Gateway API to Microsoft Dynamics CRM"}
-    ],
-    dbinfo: [
-      {application:"CRM / Claims Workspace / WWF / Apollo / InRule", dbType:"SQL Server (On-Prem)", auth:"Windows Authentication", dev:"DEV-SQL", rc:"", prod:"beast"},
-      {application:"DocumentStorage", dbType:"SQL Server (On-Prem)", auth:"SQL Server Authentication", dev:"DEV-SQL", rc:"", prod:""},
-      {application:"Claim API (Embrace DB)", dbType:"Azure SQL Database", auth:"Azure AD / MFA", dev:"", rc:"", prod:""},
-      {application:"Athena (Status Tracker)", dbType:"Cosmos DB", auth:"Azure AD / MFA", dev:"", rc:"", prod:""},
-      {application:"Atlas (Email Processing)", dbType:"Cosmos DB", auth:"Azure AD / MFA", dev:"", rc:"", prod:""}
-    ],
-    wikilinks: [
-      {title:"epi.WWF repo", url:"https://embracepetinsurance.visualstudio.com/DefaultCollection/Embrace%20Pet%20Insurance/_git/epi.WWF", category:"Repo"},
-      {title:"AIApplications repo (Ares / Apollo)", url:"https://embracepetinsurance.visualstudio.com/DefaultCollection/Embrace%20Pet%20Insurance/_git/AIApplications", category:"Repo"},
-      {title:"Completed KAD Documents (SharePoint)", url:"https://embracepetinsurance.sharepoint.com/sites/TheTechTeam/Shared%20Documents/Forms/AllItems.aspx", category:"KAD"}
-    ],
-    tickets: [
-      {ticketId:"CLAIM-1526", title:"CRM Enter Queue alert", status:"Done", owner:"Me", notes:"Deployed to Production; thresholds tuned there"},
-      {ticketId:"CLAIM-1566", title:"Service Bus DLQ alerting (Dev + RC)", status:"Ready for Testing", owner:"Me", notes:"Fire/Resolve verified end to end"},
-      {ticketId:"CLAIM-1598", title:"Azure OpenAI token usage monitors", status:"Done", owner:"Me", notes:"9 alerts across Dev, Research, Prod"},
-      {ticketId:"CLAIM-1597", title:"Migrate Service Bus DLQ monitors (Datadog→Azure)", status:"In Progress", owner:"Me", notes:"General (Prod) + Lower Env (RC/Dev) done; CrmSync (Prod) remaining"}
-    ]
-  };
+  var TABS = [
+    {
+      id:"projects", label:"Projects", title:"Claims Applications",
+      sub:"Every application/repo in the Claims ecosystem", idField:"name",
+      fields:[
+        {key:"name", label:"Name", placeholder:"e.g. Apollo"},
+        {key:"repo", label:"Repo", placeholder:"e.g. AIApplications", mono:true},
+        {key:"type", label:"Type", placeholder:"e.g. Azure Container App"},
+        {key:"description", label:"Description", placeholder:"One line", wrap:true}
+      ]
+    },
+    {
+      id:"dbinfo", label:"Database Info", title:"Database Info",
+      sub:"Database type, associated application, and auth mechanism per environment", idField:"application",
+      fields:[
+        {key:"application", label:"Application", placeholder:"e.g. CRM"},
+        {key:"dbType", label:"DB Type", placeholder:"e.g. SQL Server"},
+        {key:"auth", label:"Authentication", placeholder:"e.g. Windows Authentication"},
+        {key:"dev", label:"Dev", placeholder:"server name", mono:true},
+        {key:"rc", label:"RC", placeholder:"server name", mono:true},
+        {key:"prod", label:"Prod", placeholder:"server name", mono:true}
+      ]
+    },
+    {
+      id:"wikilinks", label:"Wiki & Links", title:"Wiki & Reference Links",
+      sub:"Repos, KAD docs, portals — anything worth bookmarking", idField:"title",
+      fields:[
+        {key:"title", label:"Title", placeholder:"e.g. epi.WWF repo"},
+        {key:"url", label:"URL", placeholder:"https://…", type:"url"},
+        {key:"category", label:"Category", placeholder:"e.g. Repo / KAD / Portal"}
+      ]
+    },
+    {
+      id:"tickets", label:"Tickets", title:"Tickets",
+      sub:"What I'm working on and what my teammates are working on", idField:"ticketId",
+      fields:[
+        {key:"ticketId", label:"Ticket ID", placeholder:"e.g. CLAIM-1598", mono:true},
+        {key:"title", label:"Title", placeholder:"Short title"},
+        {key:"status", label:"Status", type:"select", options:["Done","Ready for Testing","In Progress","Blocked","To Do"]},
+        {key:"owner", label:"Owner", placeholder:"Me / teammate name"},
+        {key:"notes", label:"Notes", placeholder:"Short status note", wrap:true}
+      ]
+    }
+  ];
+
+  var SCHEMAS = {};
+  TABS.forEach(function(t){ SCHEMAS[t.id] = t; });
 
   var state = {};
+  var editing = {}; // tab -> index currently being edited, or null
 
-  function load(tab){
+  function dataUrl(tab){ return "data/" + tab + ".json"; }
+
+  function fetchSeed(tab){
+    return fetch(dataUrl(tab)).then(function(r){
+      if (!r.ok) throw new Error("http " + r.status);
+      return r.json();
+    }).catch(function(){ return null; });
+  }
+
+  function readLocal(tab){
     try{
       var raw = localStorage.getItem(STORAGE_PREFIX + tab);
       if (raw) return JSON.parse(raw);
     }catch(e){}
-    return JSON.parse(JSON.stringify(DEFAULTS[tab] || []));
+    return null;
   }
 
-  function save(tab){
+  function saveLocal(tab){
     try{ localStorage.setItem(STORAGE_PREFIX + tab, JSON.stringify(state[tab])); }catch(e){}
   }
 
@@ -299,43 +250,117 @@
     return "status-default";
   }
 
+  function visibleRows(tab){
+    var out = [];
+    (state[tab] || []).forEach(function(row, idx){
+      if (!row._deleted) out.push({row: row, idx: idx});
+    });
+    return out;
+  }
+
+  // ---------- building the chrome (nav + panels) from TABS/SCHEMAS ----------
+
+  function buildNav(){
+    var nav = document.getElementById("tabNav");
+    nav.innerHTML = TABS.map(function(t, i){
+      return '<button data-tab="' + t.id + '"' + (i === 0 ? ' class="active"' : '') + '>' +
+        (ICONS[t.id] || "") + '<span>' + escapeHtml(t.label) + '</span></button>';
+    }).join("");
+  }
+
+  function fieldCellHtml(field, row){
+    var val = row[field.key];
+    if (field.type === "url"){
+      var url = val || "#";
+      return "<td><a href='" + escapeHtml(url) + "' target='_blank' rel='noopener'>" + escapeHtml(url) + "</a></td>";
+    }
+    if (field.type === "select"){
+      return "<td><span class='chip " + statusChipClass(val) + "'>" + escapeHtml(val) + "</span></td>";
+    }
+    var cls = [];
+    if (field.mono) cls.push("mono");
+    if (field.wrap) cls.push("wrap-cell");
+    return "<td" + (cls.length ? " class='" + cls.join(" ") + "'" : "") + ">" + escapeHtml(val) + "</td>";
+  }
+
+  function fieldInputHtml(field){
+    var common = 'data-f="' + field.key + '" placeholder="' + escapeHtml(field.placeholder || "") + '"';
+    if (field.type === "select"){
+      var opts = field.options.map(function(o){ return "<option>" + escapeHtml(o) + "</option>"; }).join("");
+      return '<select data-f="' + field.key + '">' + opts + '</select>';
+    }
+    if (field.wrap){
+      return '<textarea ' + common + '></textarea>';
+    }
+    return '<input ' + common + '>';
+  }
+
+  function buildPanels(){
+    var host = document.getElementById("panels");
+    host.innerHTML = TABS.map(function(t, i){
+      var headCols = t.fields.map(function(f){ return "<th>" + escapeHtml(f.label) + "</th>"; }).join("") + "<th></th>";
+      var formFields = t.fields.map(function(f){
+        return '<div><label>' + escapeHtml(f.label) + '</label>' + fieldInputHtml(f) + '</div>';
+      }).join("");
+      return (
+        '<section class="panel' + (i === 0 ? ' active' : '') + '" id="panel-' + t.id + '">' +
+          '<div class="panel-head">' +
+            '<div><h2>' + escapeHtml(t.title) + '</h2><div class="sub">' + escapeHtml(t.sub) + '</div></div>' +
+            '<div class="actions">' +
+              '<button class="btn" data-export-json="' + t.id + '">' + ICONS.download + ' Export JSON</button>' +
+              '<button class="btn ghost" data-export-csv="' + t.id + '">Export CSV</button>' +
+              '<button class="btn primary" data-toggle-form="' + t.id + '">' + ICONS.plus + ' Add</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="add-form" id="form-' + t.id + '">' +
+            '<div class="form-title" id="form-title-' + t.id + '">Add new</div>' +
+            '<div class="fields">' + formFields + '</div>' +
+            '<button class="btn primary" data-save="' + t.id + '">Save</button>' +
+            '<button class="btn" data-cancel="' + t.id + '">Cancel</button>' +
+          '</div>' +
+          '<div class="table-wrap"><table><thead><tr>' + headCols + '</tr></thead>' +
+            '<tbody id="rows-' + t.id + '"></tbody>' +
+          '</table></div>' +
+        '</section>'
+      );
+    }).join("");
+  }
+
+  // ---------- rendering ----------
+
   function render(tab){
-    var rows = state[tab] || [];
     var tbody = document.getElementById("rows-" + tab);
     if (!tbody) return;
+    var rows = visibleRows(tab);
+    var fields = SCHEMAS[tab].fields;
     if (!rows.length){
-      var colCount = SCHEMAS[tab].cols.length + 1;
-      tbody.innerHTML = '<tr><td class="empty-state" colspan="' + colCount + '">No entries yet. Click "+ Add" to create one.</td></tr>';
+      var colCount = fields.length + 1;
+      tbody.innerHTML = '<tr><td class="empty-state" colspan="' + colCount + '">' + ICONS.inbox +
+        '<div>No entries yet. Click &ldquo;+ Add&rdquo; to create one.</div></td></tr>';
       return;
     }
-    tbody.innerHTML = rows.map(function(row, idx){
-      var cells = "";
-      if (tab === "projects"){
-        cells = "<td>" + escapeHtml(row.name) + "</td>" +
-                "<td class='mono'>" + escapeHtml(row.repo) + "</td>" +
-                "<td>" + escapeHtml(row.type) + "</td>" +
-                "<td class='wrap-cell'>" + escapeHtml(row.description) + "</td>";
-      } else if (tab === "dbinfo"){
-        cells = "<td>" + escapeHtml(row.application) + "</td>" +
-                "<td>" + escapeHtml(row.dbType) + "</td>" +
-                "<td>" + escapeHtml(row.auth) + "</td>" +
-                "<td class='mono'>" + escapeHtml(row.dev) + "</td>" +
-                "<td class='mono'>" + escapeHtml(row.rc) + "</td>" +
-                "<td class='mono'>" + escapeHtml(row.prod) + "</td>";
-      } else if (tab === "wikilinks"){
-        var url = row.url || "#";
-        cells = "<td>" + escapeHtml(row.title) + "</td>" +
-                "<td><a href='" + escapeHtml(url) + "' target='_blank' rel='noopener'>" + escapeHtml(url) + "</a></td>" +
-                "<td>" + escapeHtml(row.category) + "</td>";
-      } else if (tab === "tickets"){
-        cells = "<td class='mono'>" + escapeHtml(row.ticketId) + "</td>" +
-                "<td>" + escapeHtml(row.title) + "</td>" +
-                "<td><span class='chip " + statusChipClass(row.status) + "'>" + escapeHtml(row.status) + "</span></td>" +
-                "<td>" + escapeHtml(row.owner) + "</td>" +
-                "<td class='wrap-cell'>" + escapeHtml(row.notes) + "</td>";
-      }
-      return "<tr>" + cells + "<td><button class='row-del' data-del='" + tab + "' data-idx='" + idx + "' title='Delete'>&times;</button></td></tr>";
+    tbody.innerHTML = rows.map(function(entry){
+      var row = entry.row, idx = entry.idx;
+      var cells = fields.map(function(f){ return fieldCellHtml(f, row); }).join("");
+      return "<tr>" + cells +
+        "<td class='row-actions'>" +
+          "<button class='icon-btn' data-edit='" + tab + "' data-idx='" + idx + "' title='Edit'>" + ICONS.edit + "</button>" +
+          "<button class='icon-btn danger' data-del='" + tab + "' data-idx='" + idx + "' title='Delete'>" + ICONS.trash + "</button>" +
+        "</td></tr>";
     }).join("");
+  }
+
+  // ---------- export ----------
+
+  function downloadBlob(content, filename, mime){
+    var blob = new Blob([content], {type: mime});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
   }
 
   function csvEscape(v){
@@ -345,67 +370,122 @@
   }
 
   function exportCsv(tab){
-    var cols = SCHEMAS[tab].cols;
-    var rows = state[tab] || [];
+    var cols = SCHEMAS[tab].fields.map(function(f){ return f.key; });
+    var rows = visibleRows(tab).map(function(e){ return e.row; });
     var lines = [cols.join(",")];
     rows.forEach(function(r){
       lines.push(cols.map(function(c){ return csvEscape(r[c]); }).join(","));
     });
-    var csv = lines.join("\r\n");
-    var blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
-    var a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = tab + ".csv";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    downloadBlob(lines.join("\r\n"), tab + ".csv", "text/csv;charset=utf-8;");
   }
+
+  function exportJson(tab){
+    downloadBlob(JSON.stringify(state[tab] || [], null, 2), tab + ".json", "application/json");
+  }
+
+  // ---------- mutations ----------
 
   function addRow(tab, data){
     state[tab].push(data);
-    save(tab);
+    saveLocal(tab);
+    render(tab);
+  }
+
+  function updateRow(tab, idx, data){
+    var existing = state[tab][idx] || {};
+    data._deleted = existing._deleted;
+    state[tab][idx] = data;
+    saveLocal(tab);
     render(tab);
   }
 
   function deleteRow(tab, idx){
-    state[tab].splice(idx, 1);
-    save(tab);
+    if (!window.confirm("Hide this row? It stays in the saved data and JSON export, just hidden from the table.")) return;
+    state[tab][idx]._deleted = true;
+    saveLocal(tab);
     render(tab);
   }
 
-  function wireForm(tab){
+  // ---------- form wiring ----------
+
+  function resetForm(tab){
     var form = document.getElementById("form-" + tab);
-    document.querySelector("[data-toggle-form='" + tab + "']").addEventListener("click", function(){
-      form.classList.toggle("open");
-    });
-    document.querySelector("[data-cancel='" + tab + "']").addEventListener("click", function(){
-      form.classList.remove("open");
-      form.querySelectorAll("input,select").forEach(function(el){ el.value = ""; });
-    });
-    document.querySelector("[data-save='" + tab + "']").addEventListener("click", function(){
-      var data = {};
-      form.querySelectorAll("[data-f]").forEach(function(el){ data[el.getAttribute("data-f")] = el.value.trim(); });
-      var labelField = SCHEMAS[tab].label;
-      if (!data[labelField]) { return; }
-      addRow(tab, data);
-      form.classList.remove("open");
-      form.querySelectorAll("input,select").forEach(function(el){ el.value = ""; });
+    form.querySelectorAll("[data-f]").forEach(function(el){ el.value = el.tagName === "SELECT" ? el.options[0].value : ""; });
+    editing[tab] = null;
+    document.getElementById("form-title-" + tab).textContent = "Add new";
+  }
+
+  function fillForm(tab, row){
+    var form = document.getElementById("form-" + tab);
+    form.querySelectorAll("[data-f]").forEach(function(el){
+      el.value = row[el.getAttribute("data-f")] || "";
     });
   }
 
-  function wireDeleteDelegation(){
-    document.querySelectorAll("tbody").forEach(function(tbody){
-      tbody.addEventListener("click", function(e){
-        var btn = e.target.closest("[data-del]");
-        if (!btn) return;
-        deleteRow(btn.getAttribute("data-del"), parseInt(btn.getAttribute("data-idx"), 10));
-      });
+  function openForm(tab){
+    document.getElementById("form-" + tab).classList.add("open");
+  }
+
+  function closeForm(tab){
+    document.getElementById("form-" + tab).classList.remove("open");
+  }
+
+  function wireForm(tab){
+    document.querySelector("[data-toggle-form='" + tab + "']").addEventListener("click", function(){
+      var form = document.getElementById("form-" + tab);
+      if (form.classList.contains("open") && editing[tab] == null){
+        closeForm(tab);
+      } else {
+        resetForm(tab);
+        openForm(tab);
+      }
+    });
+    document.querySelector("[data-cancel='" + tab + "']").addEventListener("click", function(){
+      closeForm(tab);
+      resetForm(tab);
+    });
+    document.querySelector("[data-save='" + tab + "']").addEventListener("click", function(){
+      var form = document.getElementById("form-" + tab);
+      var data = {};
+      form.querySelectorAll("[data-f]").forEach(function(el){ data[el.getAttribute("data-f")] = el.value.trim(); });
+      var labelField = SCHEMAS[tab].idField;
+      if (!data[labelField]) return;
+      if (editing[tab] != null){
+        updateRow(tab, editing[tab], data);
+      } else {
+        addRow(tab, data);
+      }
+      closeForm(tab);
+      resetForm(tab);
+    });
+  }
+
+  function wireRowActionDelegation(){
+    document.getElementById("panels").addEventListener("click", function(e){
+      var editBtn = e.target.closest("[data-edit]");
+      if (editBtn){
+        var tab = editBtn.getAttribute("data-edit");
+        var idx = parseInt(editBtn.getAttribute("data-idx"), 10);
+        editing[tab] = idx;
+        document.getElementById("form-title-" + tab).textContent = "Edit entry";
+        fillForm(tab, state[tab][idx]);
+        openForm(tab);
+        document.getElementById("form-" + tab).scrollIntoView({behavior:"smooth", block:"center"});
+        return;
+      }
+      var delBtn = e.target.closest("[data-del]");
+      if (delBtn){
+        deleteRow(delBtn.getAttribute("data-del"), parseInt(delBtn.getAttribute("data-idx"), 10));
+      }
     });
   }
 
   function wireExportButtons(){
-    document.querySelectorAll("[data-export]").forEach(function(btn){
-      btn.addEventListener("click", function(){ exportCsv(btn.getAttribute("data-export")); });
+    document.querySelectorAll("[data-export-json]").forEach(function(btn){
+      btn.addEventListener("click", function(){ exportJson(btn.getAttribute("data-export-json")); });
+    });
+    document.querySelectorAll("[data-export-csv]").forEach(function(btn){
+      btn.addEventListener("click", function(){ exportCsv(btn.getAttribute("data-export-csv")); });
     });
   }
 
@@ -420,15 +500,46 @@
     });
   }
 
+  function showFetchWarning(tabs){
+    var el = document.getElementById("fetchWarn");
+    el.textContent = "Couldn't load seed data for: " + tabs.join(", ") +
+      ". If you opened this file directly (file://), serve it over http instead " +
+      "(e.g. run `npx serve` in this folder, or use the hosted GitHub Pages link) so the data/*.json files can load.";
+    el.classList.add("show");
+  }
+
   function init(){
-    Object.keys(SCHEMAS).forEach(function(tab){ state[tab] = load(tab); });
+    buildNav();
+    buildPanels();
     wireTabs();
-    Object.keys(SCHEMAS).forEach(function(tab){
-      wireForm(tab);
-      render(tab);
-    });
-    wireDeleteDelegation();
+    TABS.forEach(function(t){ wireForm(t.id); editing[t.id] = null; });
+    wireRowActionDelegation();
     wireExportButtons();
+
+    var failed = [];
+    var loaders = TABS.map(function(t){
+      var tab = t.id;
+      var local = readLocal(tab);
+      if (local){
+        state[tab] = local;
+        render(tab);
+        return Promise.resolve();
+      }
+      return fetchSeed(tab).then(function(seed){
+        if (seed == null){
+          failed.push(tab);
+          state[tab] = [];
+        } else {
+          state[tab] = seed;
+          saveLocal(tab);
+        }
+        render(tab);
+      });
+    });
+
+    Promise.all(loaders).then(function(){
+      if (failed.length) showFetchWarning(failed);
+    });
   }
 
   if (document.readyState === "loading"){
