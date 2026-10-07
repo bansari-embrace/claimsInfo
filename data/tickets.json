@@ -2,7 +2,7 @@
   {
     "ticketId": "CLAIM-1526",
     "title": "CRM Enter Queue alert",
-    "status": "Done",
+    "status": "Production",
     "sprint": "",
     "assignee": "Bilal Ansari",
     "notes": "Deployed to Production; thresholds tuned there"
