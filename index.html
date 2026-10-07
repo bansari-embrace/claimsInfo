@@ -378,7 +378,10 @@
     el.textContent = m.text;
   }
 
+  var MAX_COMMIT_ATTEMPTS = 4;
+
   function commitTab(tab, attempt){
+    attempt = attempt || 0;
     var settings = getSettings();
     if (!settings.token){ setSyncStatus(tab, "offline"); return; }
     setSyncStatus(tab, "saving");
@@ -405,7 +408,10 @@
       })
       .then(function(r){
         if (r.ok){ setSyncStatus(tab, "saved"); return; }
-        if (r.status === 409 && !attempt){ return commitTab(tab, 1); }
+        if (r.status === 409 && attempt < MAX_COMMIT_ATTEMPTS - 1){
+          setTimeout(function(){ commitTab(tab, attempt + 1); }, 300 * (attempt + 1));
+          return;
+        }
         return r.json().catch(function(){ return {}; }).then(function(j){
           setSyncStatus(tab, "error", j.message || ("http " + r.status));
         });
