@@ -12,18 +12,13 @@ Just open `index.html` in a browser — no server needed.
 
 ## Host on GitHub Pages
 
-1. Create a new GitHub repo (e.g. `claims-hub`), public or private (Pages works on both with GitHub Pro/Team, public repos get it free).
-2. From this folder, push to it:
-   ```
-   git init
-   git add .
-   git commit -m "Initial Claims Reference Hub"
-   git branch -M main
-   git remote add origin https://github.com/<your-username>/claims-hub.git
-   git push -u origin main
-   ```
-3. On GitHub: **Settings → Pages → Source → Deploy from a branch → `main` / root**.
-4. Your site goes live at `https://<your-username>.github.io/claims-hub/`.
+Already pushed to: https://github.com/bansari-embrace/claimsInfo
+
+Remaining step (do this on GitHub, one time):
+1. Go to the repo → **Settings → Pages**.
+2. Under **Source**, choose **Deploy from a branch**.
+3. Branch: **main**, folder: **/ (root)** → **Save**.
+4. Site goes live at: **https://bansari-embrace.github.io/claimsInfo/** (takes a minute or two the first time).
 
 ## Notes
 
