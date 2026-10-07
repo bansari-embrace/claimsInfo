@@ -4,7 +4,7 @@
     "title": "CRM Enter Queue alert",
     "status": "Production",
     "sprint": "",
-    "assignee": "Bilal Ansari",
+    "assignee": "Bilal",
     "notes": "Deployed to Production; thresholds tuned there"
   },
   {
