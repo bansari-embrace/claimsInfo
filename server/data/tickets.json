@@ -1,6 +1,0 @@
-[
-  {"ticketId":"CLAIM-1526", "title":"CRM Enter Queue alert", "status":"Done", "sprint":"", "owner":"Me", "notes":"Deployed to Production; thresholds tuned there"},
-  {"ticketId":"CLAIM-1566", "title":"Service Bus DLQ alerting (Dev + RC)", "status":"Ready for Testing", "sprint":"", "owner":"Me", "notes":"Fire/Resolve verified end to end"},
-  {"ticketId":"CLAIM-1598", "title":"Azure OpenAI token usage monitors", "status":"Done", "sprint":"", "owner":"Me", "notes":"9 alerts across Dev, Research, Prod"},
-  {"ticketId":"CLAIM-1597", "title":"Migrate Service Bus DLQ monitors (Datadog -> Azure)", "status":"In Progress", "sprint":"", "owner":"Me", "notes":"General (Prod) + Lower Env (RC/Dev) done; CrmSync (Prod) remaining"}
-]

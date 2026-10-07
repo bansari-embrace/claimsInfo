@@ -184,8 +184,8 @@
       </div>
     </div>
     <div class="top-right">
-      <button class="conn-pill" id="connPill" title="Backend settings"></button>
-      <button class="icon-toggle" id="settingsBtn" title="Backend settings"></button>
+      <button class="conn-pill" id="connPill" title="GitHub sync settings"></button>
+      <button class="icon-toggle" id="settingsBtn" title="GitHub sync settings"></button>
       <button class="icon-toggle" id="themeToggle" title="Toggle theme"></button>
     </div>
   </div>
@@ -202,8 +202,8 @@
   <div id="panels"></div>
 
   <footer class="note">
-    This page talks to a small backend API for all saving &mdash; GitHub Pages only serves these static files. Set the backend's URL once (gear icon) so every device shares the same data.
-    Delete only hides a row from view &mdash; it stays in the data, just marked hidden.
+    Every Add, Edit and Delete is committed straight to <code class="mono">data/*.json</code> in the GitHub repo, so everyone who opens this page sees the same data.
+    Connect a GitHub token once per device (gear icon) to enable saving. Delete only hides a row from view &mdash; it stays in the file.
   </footer>
 </div>
 
@@ -231,14 +231,17 @@
 
 <div class="modal-overlay" id="settingsOverlay">
   <div class="modal-card small">
-    <h3>Backend settings</h3>
-    <p>This page is static (GitHub Pages) and has no storage of its own &mdash; it calls a small backend server for every save. Point it at wherever that server is running: <code class="mono">http://localhost:4000</code> while developing, or the HTTPS URL you deployed it to (see <code class="mono">server/README.md</code>).</p>
+    <h3>GitHub sync settings</h3>
+    <p>Changes are committed directly to this repo's <code class="mono">data/*.json</code> files, so everyone who opens this page sees the same data. Create a fine-grained Personal Access Token scoped to just this repo with <strong>Contents: Read and write</strong>, and paste it below &mdash; it's stored only in this browser, never committed anywhere.</p>
     <div class="fields" style="grid-template-columns:1fr;">
-      <div><label>API Base URL</label><input id="api-base" placeholder="http://localhost:4000"></div>
+      <div><label>Owner / Repo</label><input id="gh-ownerrepo" placeholder="bansari-embrace/claimsInfo"></div>
+      <div><label>Branch</label><input id="gh-branch" placeholder="main"></div>
+      <div><label>Personal Access Token</label><input id="gh-token" type="password" placeholder="github_pat_&hellip;"></div>
     </div>
     <div class="modal-actions">
-      <button class="btn" id="api-cancel">Cancel</button>
-      <button class="btn primary" id="api-save">Save</button>
+      <button class="btn" id="gh-disconnect">Disconnect</button>
+      <button class="btn" id="gh-cancel">Cancel</button>
+      <button class="btn primary" id="gh-save">Save</button>
     </div>
   </div>
 </div>
@@ -320,7 +323,7 @@
   var searchText = {};
   var sortState = {};  // tab -> {key, dir}
   var pageState = {};  // tab -> {page, size}
-  var modal = {tab:null, id:null};
+  var modal = {tab:null, idx:null};
   var pendingDelete = null;
 
   TABS.forEach(function(t){
@@ -329,64 +332,102 @@
     pageState[t.id] = {page:1, size:50};
   });
 
-  // ---------- backend API client (GitHub Pages is static; this server does the CRUD) ----------
+  // ---------- GitHub-backed persistence ----------
 
-  function getApiBase(){
+  function getSettings(){
+    var defaults = {owner:"bansari-embrace", repo:"claimsInfo", branch:"main", token:""};
     try{
-      var saved = localStorage.getItem(STORAGE_PREFIX + "apiBase");
-      if (saved) return saved;
+      var raw = localStorage.getItem(STORAGE_PREFIX + "ghSettings");
+      if (raw) return Object.assign(defaults, JSON.parse(raw));
     }catch(e){}
-    return "http://localhost:4000";
+    return defaults;
   }
 
-  function saveApiBase(url){
-    try{ localStorage.setItem(STORAGE_PREFIX + "apiBase", url); }catch(e){}
+  function saveSettings(s){
+    try{ localStorage.setItem(STORAGE_PREFIX + "ghSettings", JSON.stringify(s)); }catch(e){}
   }
 
-  function apiUrl(tab, id){
-    var base = getApiBase().replace(/\/+$/, "");
-    return base + "/api/" + tab + (id != null ? "/" + id : "");
+  function ghHeaders(token){
+    var h = {"Accept": "application/vnd.github+json"};
+    if (token) h["Authorization"] = "token " + token;
+    return h;
   }
 
-  function apiRequest(method, tab, id, body){
-    return fetch(apiUrl(tab, id), {
-      method: method,
-      headers: body ? {"Content-Type": "application/json"} : undefined,
-      body: body ? JSON.stringify(body) : undefined
-    }).then(function(r){
-      if (!r.ok) return r.json().catch(function(){ return {}; }).then(function(j){
-        throw new Error(j.error || ("http " + r.status));
-      });
-      return r.json();
-    });
+  function contentsUrl(tab, settings){
+    return "https://api.github.com/repos/" + settings.owner + "/" + settings.repo + "/contents/data/" + tab + ".json";
   }
 
-  function apiGet(tab){ return apiRequest("GET", tab); }
-  function apiCreate(tab, data){ return apiRequest("POST", tab, null, data); }
-  function apiUpdate(tab, id, data){ return apiRequest("PUT", tab, id, data); }
-  function apiDelete(tab, id){ return apiRequest("DELETE", tab, id); }
+  function utf8ToBase64(str){
+    var bytes = new TextEncoder().encode(str);
+    var binary = "";
+    for (var i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+    return btoa(binary);
+  }
 
   function setSyncStatus(tab, mode, detail){
     var el = document.getElementById("sync-" + tab);
     if (!el) return;
     var map = {
-      idle:    {cls:"", text:""},
-      saving:  {cls:"status-progress", text:"Saving…"},
-      saved:   {cls:"status-done", text:"Saved ✓"},
+      offline: {cls:"", text:"Not connected — click the gear icon to enable saving to GitHub"},
+      saving:  {cls:"status-progress", text:"Saving to GitHub…"},
+      saved:   {cls:"status-done", text:"Saved to GitHub ✓"},
       error:   {cls:"status-blocked", text:"Save failed: " + (detail || "unknown error")}
     };
-    var m = map[mode] || map.idle;
+    var m = map[mode] || map.offline;
     el.className = "sync-status " + m.cls;
     el.textContent = m.text;
   }
 
+  function commitTab(tab, attempt){
+    var settings = getSettings();
+    if (!settings.token){ setSyncStatus(tab, "offline"); return; }
+    setSyncStatus(tab, "saving");
+    var branch = settings.branch || "main";
+    var getUrl = contentsUrl(tab, settings) + "?ref=" + encodeURIComponent(branch);
+    fetch(getUrl, {headers: ghHeaders(settings.token)})
+      .then(function(r){
+        if (r.ok) return r.json();
+        if (r.status === 404) return {sha: null};
+        return Promise.reject(new Error("http " + r.status));
+      })
+      .then(function(info){
+        var body = {
+          message: "Update " + tab + ".json via Claims Reference Hub",
+          content: utf8ToBase64(JSON.stringify(state[tab] || [], null, 2)),
+          branch: branch
+        };
+        if (info && info.sha) body.sha = info.sha;
+        return fetch(contentsUrl(tab, settings), {
+          method: "PUT",
+          headers: Object.assign({"Content-Type": "application/json"}, ghHeaders(settings.token)),
+          body: JSON.stringify(body)
+        });
+      })
+      .then(function(r){
+        if (r.ok){ setSyncStatus(tab, "saved"); return; }
+        if (r.status === 409 && !attempt){ return commitTab(tab, 1); }
+        return r.json().catch(function(){ return {}; }).then(function(j){
+          setSyncStatus(tab, "error", j.message || ("http " + r.status));
+        });
+      })
+      .catch(function(err){ setSyncStatus(tab, "error", err.message); });
+  }
+
   function updateConnPill(){
+    var s = getSettings();
     var pill = document.getElementById("connPill");
-    pill.innerHTML = '<span class="dot"></span>API: ' + escapeHtml(getApiBase());
+    if (s.token){
+      pill.innerHTML = '<span class="dot"></span>Synced to ' + escapeHtml(s.owner + "/" + s.repo);
+    } else {
+      pill.innerHTML = '<span class="dot bad"></span>Not connected';
+    }
   }
 
   function openSettings(){
-    document.getElementById("api-base").value = getApiBase();
+    var s = getSettings();
+    document.getElementById("gh-ownerrepo").value = s.owner + "/" + s.repo;
+    document.getElementById("gh-branch").value = s.branch || "main";
+    document.getElementById("gh-token").value = s.token || "";
     document.getElementById("settingsOverlay").classList.add("open");
   }
 
@@ -397,18 +438,40 @@
   function wireSettings(){
     document.getElementById("settingsBtn").addEventListener("click", openSettings);
     document.getElementById("connPill").addEventListener("click", openSettings);
-    document.getElementById("api-cancel").addEventListener("click", closeSettings);
+    document.getElementById("gh-cancel").addEventListener("click", closeSettings);
     document.getElementById("settingsOverlay").addEventListener("click", function(e){
       if (e.target.id === "settingsOverlay") closeSettings();
     });
-    document.getElementById("api-save").addEventListener("click", function(){
-      var url = document.getElementById("api-base").value.trim();
-      if (!url) return;
-      saveApiBase(url);
+    document.getElementById("gh-save").addEventListener("click", function(){
+      var ownerRepo = document.getElementById("gh-ownerrepo").value.trim();
+      var parts = ownerRepo.split("/");
+      var owner = (parts[0] || "").trim();
+      var repo = (parts[1] || "").trim();
+      var branch = document.getElementById("gh-branch").value.trim() || "main";
+      var token = document.getElementById("gh-token").value.trim();
+      if (!owner || !repo) return;
+      saveSettings({owner: owner, repo: repo, branch: branch, token: token});
       updateConnPill();
       closeSettings();
-      reloadAll();
     });
+    document.getElementById("gh-disconnect").addEventListener("click", function(){
+      var s = getSettings();
+      s.token = "";
+      saveSettings(s);
+      updateConnPill();
+      closeSettings();
+    });
+  }
+
+  // ---------- seed loading (always from data/*.json — the shared source of truth) ----------
+
+  function dataUrl(tab){ return "data/" + tab + ".json?_=" + Date.now(); }
+
+  function fetchSeed(tab){
+    return fetch(dataUrl(tab)).then(function(r){
+      if (!r.ok) throw new Error("http " + r.status);
+      return r.json();
+    }).catch(function(){ return null; });
   }
 
   function escapeHtml(s){
@@ -596,12 +659,12 @@
       return;
     }
     tbody.innerHTML = rows.map(function(entry){
-      var row = entry.row;
+      var row = entry.row, idx = entry.idx;
       var cells = fields.map(function(f){ return fieldCellHtml(f, row); }).join("");
       return "<tr>" + cells +
         "<td class='row-actions'>" +
-          "<button class='icon-btn' data-edit='" + tab + "' data-id='" + row.id + "' title='Edit'>" + ICONS.edit + "</button>" +
-          "<button class='icon-btn danger' data-del='" + tab + "' data-id='" + row.id + "' title='Delete'>" + ICONS.trash + "</button>" +
+          "<button class='icon-btn' data-edit='" + tab + "' data-idx='" + idx + "' title='Edit'>" + ICONS.edit + "</button>" +
+          "<button class='icon-btn danger' data-del='" + tab + "' data-idx='" + idx + "' title='Delete'>" + ICONS.trash + "</button>" +
         "</td></tr>";
     }).join("");
   }
@@ -639,43 +702,28 @@
     downloadBlob(JSON.stringify(state[tab] || [], null, 2), tab + ".json", "application/json");
   }
 
-  // ---------- mutations (each one is a real network call to the backend) ----------
+  // ---------- mutations ----------
+
+  function persist(tab){
+    render(tab);
+    commitTab(tab);
+  }
 
   function addRow(tab, data){
-    setSyncStatus(tab, "saving");
-    return apiCreate(tab, data).then(function(row){
-      state[tab].push(row);
-      setSyncStatus(tab, "saved");
-      render(tab);
-    }).catch(function(err){
-      setSyncStatus(tab, "error", err.message);
-      throw err;
-    });
+    state[tab].push(data);
+    persist(tab);
   }
 
-  function updateRow(tab, id, data){
-    setSyncStatus(tab, "saving");
-    return apiUpdate(tab, id, data).then(function(row){
-      var idx = state[tab].findIndex(function(r){ return r.id === id; });
-      if (idx !== -1) state[tab][idx] = row;
-      setSyncStatus(tab, "saved");
-      render(tab);
-    }).catch(function(err){
-      setSyncStatus(tab, "error", err.message);
-      throw err;
-    });
+  function updateRow(tab, idx, data){
+    var existing = state[tab][idx] || {};
+    data._deleted = existing._deleted;
+    state[tab][idx] = data;
+    persist(tab);
   }
 
-  function hideRow(tab, id){
-    setSyncStatus(tab, "saving");
-    return apiDelete(tab, id).then(function(row){
-      var idx = state[tab].findIndex(function(r){ return r.id === id; });
-      if (idx !== -1) state[tab][idx] = row;
-      setSyncStatus(tab, "saved");
-      render(tab);
-    }).catch(function(err){
-      setSyncStatus(tab, "error", err.message);
-    });
+  function hideRow(tab, idx){
+    state[tab][idx]._deleted = true;
+    persist(tab);
   }
 
   // ---------- add/edit modal ----------
@@ -692,19 +740,19 @@
     return '<input ' + common + '>';
   }
 
-  function openFormModal(tab, id){
+  function openFormModal(tab, idx){
     modal.tab = tab;
-    modal.id = (id == null) ? null : id;
+    modal.idx = (idx == null) ? null : idx;
     var schema = SCHEMAS[tab];
-    document.getElementById("formTitle").textContent = (id == null) ? "Add new" : "Edit entry";
+    document.getElementById("formTitle").textContent = (idx == null) ? "Add new" : "Edit entry";
     var fieldsHost = document.getElementById("formFields");
     fieldsHost.innerHTML = schema.fields.map(function(f){
       return '<div><label>' + escapeHtml(f.label) + '</label>' + fieldInputHtml(f) + '</div>';
     }).join("");
-    if (id != null){
-      var row = state[tab].find(function(r){ return r.id === id; });
+    if (idx != null){
+      var row = state[tab][idx];
       fieldsHost.querySelectorAll("[data-f]").forEach(function(el){
-        el.value = (row && row[el.getAttribute("data-f")]) || "";
+        el.value = row[el.getAttribute("data-f")] || "";
       });
     }
     document.getElementById("formOverlay").classList.add("open");
@@ -715,7 +763,7 @@
   function closeFormModal(){
     document.getElementById("formOverlay").classList.remove("open");
     modal.tab = null;
-    modal.id = null;
+    modal.idx = null;
   }
 
   function saveFormModal(){
@@ -726,16 +774,12 @@
     fieldsHost.querySelectorAll("[data-f]").forEach(function(el){ data[el.getAttribute("data-f")] = el.value.trim(); });
     var labelField = SCHEMAS[tab].idField;
     if (!data[labelField]) return;
-    var saveBtn = document.getElementById("formSave");
-    saveBtn.disabled = true;
-    var op = (modal.id != null) ? updateRow(tab, modal.id, data) : addRow(tab, data);
-    op.then(function(){
-      saveBtn.disabled = false;
-      closeFormModal();
-    }).catch(function(){
-      saveBtn.disabled = false;
-      // keep the modal open so the input isn't lost; sync-status already shows the error
-    });
+    if (modal.idx != null){
+      updateRow(tab, modal.idx, data);
+    } else {
+      addRow(tab, data);
+    }
+    closeFormModal();
   }
 
   function wireFormModal(){
@@ -748,8 +792,8 @@
 
   // ---------- confirm modal ----------
 
-  function openConfirm(tab, id){
-    pendingDelete = {tab: tab, id: id};
+  function openConfirm(tab, idx){
+    pendingDelete = {tab: tab, idx: idx};
     document.getElementById("confirmOverlay").classList.add("open");
   }
 
@@ -761,7 +805,7 @@
   function wireConfirmModal(){
     document.getElementById("confirmCancel").addEventListener("click", closeConfirm);
     document.getElementById("confirmOk").addEventListener("click", function(){
-      if (pendingDelete) hideRow(pendingDelete.tab, pendingDelete.id);
+      if (pendingDelete) hideRow(pendingDelete.tab, pendingDelete.idx);
       closeConfirm();
     });
     document.getElementById("confirmOverlay").addEventListener("click", function(e){
@@ -782,12 +826,12 @@
 
       var editBtn = e.target.closest("[data-edit]");
       if (editBtn){
-        openFormModal(editBtn.getAttribute("data-edit"), parseInt(editBtn.getAttribute("data-id"), 10));
+        openFormModal(editBtn.getAttribute("data-edit"), parseInt(editBtn.getAttribute("data-idx"), 10));
         return;
       }
       var delBtn = e.target.closest("[data-del]");
       if (delBtn){
-        openConfirm(delBtn.getAttribute("data-del"), parseInt(delBtn.getAttribute("data-id"), 10));
+        openConfirm(delBtn.getAttribute("data-del"), parseInt(delBtn.getAttribute("data-idx"), 10));
         return;
       }
       var th = e.target.closest("th[data-sort]");
@@ -860,28 +904,10 @@
 
   function showFetchWarning(tabs){
     var el = document.getElementById("fetchWarn");
-    if (!tabs.length){ el.classList.remove("show"); return; }
-    el.textContent = "Couldn't reach the backend for: " + tabs.join(", ") +
-      ". Check that the server is running and that the API Base URL (gear icon) is correct — currently " + getApiBase() + ".";
+    el.textContent = "Couldn't load seed data for: " + tabs.join(", ") +
+      ". If you opened this file directly (file://), serve it over http instead " +
+      "(e.g. run `npx serve` in this folder, or use the hosted GitHub Pages link) so the data/*.json files can load.";
     el.classList.add("show");
-  }
-
-  function reloadAll(){
-    var failed = [];
-    var loaders = TABS.map(function(t){
-      var tab = t.id;
-      return apiGet(tab).then(function(rows){
-        state[tab] = rows;
-      }).catch(function(){
-        failed.push(tab);
-        state[tab] = state[tab] || [];
-      }).then(function(){
-        render(tab);
-      });
-    });
-    return Promise.all(loaders).then(function(){
-      showFetchWarning(failed);
-    });
   }
 
   function init(){
@@ -896,7 +922,25 @@
     wireFormModal();
     wireConfirmModal();
     wireSettings();
-    reloadAll();
+    TABS.forEach(function(t){ setSyncStatus(t.id, "offline"); });
+
+    var failed = [];
+    var loaders = TABS.map(function(t){
+      var tab = t.id;
+      return fetchSeed(tab).then(function(seed){
+        if (seed == null){
+          failed.push(tab);
+          state[tab] = [];
+        } else {
+          state[tab] = seed;
+        }
+        render(tab);
+      });
+    });
+
+    Promise.all(loaders).then(function(){
+      if (failed.length) showFetchWarning(failed);
+    });
   }
 
   if (document.readyState === "loading"){
