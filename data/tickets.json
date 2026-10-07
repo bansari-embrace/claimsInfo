@@ -2,7 +2,7 @@
   {
     "ticketId": "CLAIM-1526",
     "title": "CRM Enter Queue alert",
-    "status": "Blocked",
+    "status": "Done",
     "sprint": "",
     "owner": "Me",
     "notes": "Deployed to Production; thresholds tuned there"
