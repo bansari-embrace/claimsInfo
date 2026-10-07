@@ -26,9 +26,9 @@
   {
     "ticketId": "CLAIM-1597",
     "title": "Migrate Service Bus DLQ monitors (Datadog -> Azure)",
-    "status": "In Progress",
+    "status": "",
     "sprint": "",
-    "assignee": "Me",
+    "assignee": "Bilal Ansari",
     "notes": "General (Prod) + Lower Env (RC/Dev) done; CrmSync (Prod) remaining"
   },
   {
