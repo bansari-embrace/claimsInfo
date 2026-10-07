@@ -153,16 +153,17 @@
   /* modal (shared add/edit form + confirm + settings) */
   .modal-overlay{position:fixed;inset:0;background:rgba(10,10,20,.5);backdrop-filter:blur(2px);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;}
   .modal-overlay.open{display:flex;}
-  .modal-card{background:var(--surface);border-radius:10px;padding:22px;max-width:540px;width:100%;box-shadow:0 24px 70px -24px rgba(0,0,0,.45);animation:modalIn .15s ease;}
+  .modal-card{background:var(--surface);border-radius:10px;padding:28px;max-width:680px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 24px 70px -24px rgba(0,0,0,.45);animation:modalIn .15s ease;}
   .modal-card.small{max-width:420px;}
   @keyframes modalIn{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
-  .modal-card h3{margin:0 0 12px;font-size:1.05rem;color:var(--accent);}
-  .modal-card p{margin:0 0 16px;color:var(--muted);font-size:.85rem;}
-  .modal-card .fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px;}
-  .modal-card label{display:block;font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;margin-bottom:4px;}
-  .modal-card input,.modal-card select,.modal-card textarea{width:100%;font:inherit;font-size:.85rem;padding:.5rem .6rem;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--fg);}
+  .modal-card h3{margin:0 0 14px;font-size:1.2rem;color:var(--accent);}
+  .modal-card p{margin:0 0 18px;color:var(--muted);font-size:.9rem;}
+  .modal-card .fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:18px;}
+  .modal-card .fields .wrap-field{grid-column:1 / -1;}
+  .modal-card label{display:block;font-size:.74rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;margin-bottom:5px;}
+  .modal-card input,.modal-card select,.modal-card textarea{width:100%;font:inherit;font-size:.92rem;padding:.6rem .7rem;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--fg);}
   .modal-card input:focus,.modal-card select:focus,.modal-card textarea:focus{outline:2px solid var(--accent-soft);border-color:var(--accent);}
-  .modal-card textarea{resize:vertical;min-height:2.4rem;}
+  .modal-card textarea{resize:vertical;min-height:7rem;}
   .modal-actions{display:flex;justify-content:flex-end;gap:8px;}
 
   @media (max-width:520px){
@@ -766,7 +767,7 @@
     document.getElementById("formTitle").textContent = (idx == null) ? "Add new" : "Edit entry";
     var fieldsHost = document.getElementById("formFields");
     fieldsHost.innerHTML = schema.fields.map(function(f){
-      return '<div><label>' + escapeHtml(f.label) + '</label>' + fieldInputHtml(f) + '</div>';
+      return '<div' + (f.wrap ? ' class="wrap-field"' : '') + '><label>' + escapeHtml(f.label) + '</label>' + fieldInputHtml(f) + '</div>';
     }).join("");
     if (idx != null){
       var row = state[tab][idx];
