@@ -386,8 +386,8 @@
     if (!settings.token){ setSyncStatus(tab, "offline"); return; }
     setSyncStatus(tab, "saving");
     var branch = settings.branch || "main";
-    var getUrl = contentsUrl(tab, settings) + "?ref=" + encodeURIComponent(branch);
-    fetch(getUrl, {headers: ghHeaders(settings.token)})
+    var getUrl = contentsUrl(tab, settings) + "?ref=" + encodeURIComponent(branch) + "&_=" + Date.now();
+    fetch(getUrl, {headers: ghHeaders(settings.token), cache: "no-store"})
       .then(function(r){
         if (r.ok) return r.json();
         if (r.status === 404) return {sha: null};
@@ -474,7 +474,7 @@
   function dataUrl(tab){ return "data/" + tab + ".json?_=" + Date.now(); }
 
   function fetchSeed(tab){
-    return fetch(dataUrl(tab)).then(function(r){
+    return fetch(dataUrl(tab), {cache: "no-store"}).then(function(r){
       if (!r.ok) throw new Error("http " + r.status);
       return r.json();
     }).catch(function(){ return null; });
