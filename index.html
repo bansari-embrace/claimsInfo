@@ -419,6 +419,14 @@
       .catch(function(err){ setSyncStatus(tab, "error", err.message); });
   }
 
+  function hasWriteAccess(){
+    return !!getSettings().token;
+  }
+
+  function blockNoAccess(){
+    alert("You don't have write permission.\n\nConnect a GitHub token first (click the gear icon, top right) to add, edit, or delete rows.");
+  }
+
   function updateConnPill(){
     var s = getSettings();
     var pill = document.getElementById("connPill");
@@ -442,6 +450,7 @@
   }
 
   function wireSettings(){
+    document.getElementById("settingsBtn").innerHTML = ICONS.gear;
     document.getElementById("settingsBtn").addEventListener("click", openSettings);
     document.getElementById("connPill").addEventListener("click", openSettings);
     document.getElementById("gh-cancel").addEventListener("click", closeSettings);
@@ -828,15 +837,21 @@
   function wireRowActionDelegation(){
     document.getElementById("panels").addEventListener("click", function(e){
       var addBtn = e.target.closest("[data-add]");
-      if (addBtn){ openFormModal(addBtn.getAttribute("data-add"), null); return; }
+      if (addBtn){
+        if (!hasWriteAccess()){ blockNoAccess(); return; }
+        openFormModal(addBtn.getAttribute("data-add"), null);
+        return;
+      }
 
       var editBtn = e.target.closest("[data-edit]");
       if (editBtn){
+        if (!hasWriteAccess()){ blockNoAccess(); return; }
         openFormModal(editBtn.getAttribute("data-edit"), parseInt(editBtn.getAttribute("data-idx"), 10));
         return;
       }
       var delBtn = e.target.closest("[data-del]");
       if (delBtn){
+        if (!hasWriteAccess()){ blockNoAccess(); return; }
         openConfirm(delBtn.getAttribute("data-del"), parseInt(delBtn.getAttribute("data-idx"), 10));
         return;
       }
