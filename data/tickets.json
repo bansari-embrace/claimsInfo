@@ -5,6 +5,7 @@
     "status": "Done",
     "sprint": "",
     "owner": "Me",
+    "assignee": "Bilal Ansari",
     "notes": "Deployed to Production; thresholds tuned there"
   },
   {
