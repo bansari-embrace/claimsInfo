@@ -20,7 +20,7 @@
     "title": "Azure OpenAI token usage monitors",
     "status": "Done",
     "sprint": "",
-    "assignee": "Me",
+    "assignee": "Bilal Ansari",
     "notes": "9 alerts across Dev, Research, Prod"
   },
   {
