@@ -10,7 +10,7 @@
   {
     "ticketId": "CLAIM-1566",
     "title": "Alert for Automated Emails going into Dead Letter Queue",
-    "status": "Done",
+    "status": "Ready for Production",
     "sprint": "",
     "assignee": "Bilal Ansari",
     "notes": "Fire/Resolve verified end to end"
