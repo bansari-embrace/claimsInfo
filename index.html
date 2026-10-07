@@ -364,14 +364,18 @@
     return btoa(binary);
   }
 
-  function setSyncStatus(tab, mode, detail){
+  var ACTION_GERUND = {add:"Saving…", update:"Updating…", delete:"Deleting…"};
+  var ACTION_DONE = {add:"Saved successfully", update:"Updated successfully", delete:"Deleted successfully"};
+  var ACTION_VERB = {add:"Save", update:"Update", delete:"Delete"};
+
+  function setSyncStatus(tab, mode, detail, action){
     var el = document.getElementById("sync-" + tab);
     if (!el) return;
     var map = {
-      offline: {cls:"", text:"Not connected — click the gear icon to enable saving to GitHub"},
-      saving:  {cls:"status-progress", text:"Saving to GitHub…"},
-      saved:   {cls:"status-done", text:"Saved to GitHub ✓"},
-      error:   {cls:"status-blocked", text:"Save failed: " + (detail || "unknown error")}
+      offline: {cls:"", text:"Not connected — click the gear icon to enable saving"},
+      saving:  {cls:"status-progress", text: ACTION_GERUND[action] || "Saving…"},
+      saved:   {cls:"status-done", text: ACTION_DONE[action] || "Saved successfully"},
+      error:   {cls:"status-blocked", text: (ACTION_VERB[action] || "Save") + " failed: " + (detail || "unknown error")}
     };
     var m = map[mode] || map.offline;
     el.className = "sync-status " + m.cls;
@@ -380,11 +384,11 @@
 
   var MAX_COMMIT_ATTEMPTS = 4;
 
-  function commitTab(tab, attempt){
+  function commitTab(tab, attempt, action){
     attempt = attempt || 0;
     var settings = getSettings();
-    if (!settings.token){ setSyncStatus(tab, "offline"); return; }
-    setSyncStatus(tab, "saving");
+    if (!settings.token){ setSyncStatus(tab, "offline", null, action); return; }
+    setSyncStatus(tab, "saving", null, action);
     var branch = settings.branch || "main";
     var getUrl = contentsUrl(tab, settings) + "?ref=" + encodeURIComponent(branch) + "&_=" + Date.now();
     fetch(getUrl, {headers: ghHeaders(settings.token), cache: "no-store"})
@@ -407,16 +411,16 @@
         });
       })
       .then(function(r){
-        if (r.ok){ setSyncStatus(tab, "saved"); return; }
+        if (r.ok){ setSyncStatus(tab, "saved", null, action); return; }
         if (r.status === 409 && attempt < MAX_COMMIT_ATTEMPTS - 1){
-          setTimeout(function(){ commitTab(tab, attempt + 1); }, 300 * (attempt + 1));
+          setTimeout(function(){ commitTab(tab, attempt + 1, action); }, 300 * (attempt + 1));
           return;
         }
         return r.json().catch(function(){ return {}; }).then(function(j){
-          setSyncStatus(tab, "error", j.message || ("http " + r.status));
+          setSyncStatus(tab, "error", j.message || ("http " + r.status), action);
         });
       })
-      .catch(function(err){ setSyncStatus(tab, "error", err.message); });
+      .catch(function(err){ setSyncStatus(tab, "error", err.message, action); });
   }
 
   function hasWriteAccess(){
@@ -719,26 +723,26 @@
 
   // ---------- mutations ----------
 
-  function persist(tab){
+  function persist(tab, action){
     render(tab);
-    commitTab(tab);
+    commitTab(tab, 0, action);
   }
 
   function addRow(tab, data){
     state[tab].push(data);
-    persist(tab);
+    persist(tab, "add");
   }
 
   function updateRow(tab, idx, data){
     var existing = state[tab][idx] || {};
     data._deleted = existing._deleted;
     state[tab][idx] = data;
-    persist(tab);
+    persist(tab, "update");
   }
 
   function hideRow(tab, idx){
     state[tab][idx]._deleted = true;
-    persist(tab);
+    persist(tab, "delete");
   }
 
   // ---------- add/edit modal ----------
