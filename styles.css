@@ -45,8 +45,7 @@ code,.mono{font-family:"JetBrains Mono",ui-monospace,monospace;}
 .crm-brand h1{font-size:1.15rem;margin:0;color:#fff;font-weight:700;}
 .crm-brand .tagline{font-size:.76rem;color:rgba(255,255,255,.75);}
 .top-right{display:flex;align-items:center;gap:8px;}
-.conn-pill{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:600;padding:.35rem .7rem;border-radius:999px;background:rgba(255,255,255,.14);color:#fff;white-space:nowrap;cursor:pointer;border:none;font-family:inherit;}
-.conn-pill:hover{background:rgba(255,255,255,.22);}
+.conn-pill{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:600;padding:.35rem .7rem;border-radius:999px;background:rgba(255,255,255,.14);color:#fff;white-space:nowrap;cursor:default;border:none;font-family:inherit;}
 .conn-pill .dot{width:7px;height:7px;border-radius:50%;background:var(--good);}
 .conn-pill .dot.bad{background:#f0b4d0;}
 .icon-toggle{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:7px;border:none;background:rgba(255,255,255,.14);color:#fff;cursor:pointer;transition:background .12s ease;}

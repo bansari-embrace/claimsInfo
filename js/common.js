@@ -172,7 +172,6 @@
   function wireSettings(){
     document.getElementById("settingsBtn").innerHTML = ICONS.gear;
     document.getElementById("settingsBtn").addEventListener("click", openSettings);
-    document.getElementById("connPill").addEventListener("click", openSettings);
     document.getElementById("gh-cancel").addEventListener("click", closeSettings);
     document.getElementById("gh-save").addEventListener("click", function(){
       var token = document.getElementById("gh-token").value.trim();
