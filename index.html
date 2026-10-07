@@ -304,7 +304,7 @@
       fields:[
         {key:"ticketId", label:"Ticket ID", placeholder:"e.g. CLAIM-1598", mono:true},
         {key:"title", label:"Title", placeholder:"Short title"},
-        {key:"status", label:"Status", type:"select", options:["Done","Ready for Testing","In Progress","Blocked","To Do"]},
+        {key:"status", label:"Status", type:"select", options:["Blocked","Development","Ready for Testing","Testing","RC Testing","Ready for Production","Production","Done"]},
         {key:"sprint", label:"Sprint", placeholder:"e.g. Sprint 24.19"},
         {key:"owner", label:"Owner", placeholder:"Me / teammate name"},
         {key:"assignee", label:"Assignee", placeholder:"Me / teammate name"},
@@ -498,9 +498,10 @@
 
   function statusChipClass(status){
     var s = (status || "").toLowerCase();
-    if (s === "done") return "status-done";
-    if (s === "in progress" || s === "ready for testing") return "status-progress";
     if (s === "blocked") return "status-blocked";
+    if (s === "done" || s === "production") return "status-done";
+    if (s === "development" || s === "ready for testing" || s === "testing" ||
+        s === "rc testing" || s === "ready for production" || s === "in progress") return "status-progress";
     return "status-default";
   }
 
