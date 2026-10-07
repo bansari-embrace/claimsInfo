@@ -376,10 +376,9 @@
   }
 
   function initTheme(){
-    try{
-      var saved = localStorage.getItem(STORAGE_PREFIX + "theme");
-      if (saved) document.documentElement.setAttribute("data-theme", saved);
-    }catch(e){}
+    var saved = null;
+    try{ saved = localStorage.getItem(STORAGE_PREFIX + "theme"); }catch(e){}
+    document.documentElement.setAttribute("data-theme", saved || "light");
     paintThemeIcon();
     document.getElementById("themeToggle").addEventListener("click", function(){
       var next = effectiveTheme() === "dark" ? "light" : "dark";
