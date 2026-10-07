@@ -204,6 +204,7 @@
     var el = document.getElementById("sync-" + tab);
     if (!el) return;
     var map = {
+      idle:    {cls:"", text:""},
       offline: {cls:"", text:"Not connected — click the gear icon to enable saving"},
       saving:  {cls:"status-progress", text: ACTION_GERUND[action] || "Saving…"},
       saved:   {cls:"status-done", text: ACTION_DONE[action] || "Saved successfully"},
@@ -300,6 +301,7 @@
       if (!owner || !repo) return;
       saveSettings({owner: owner, repo: repo, branch: branch, token: token});
       updateConnPill();
+      refreshAllSyncStatus();
       closeSettings();
     });
     document.getElementById("gh-disconnect").addEventListener("click", function(){
@@ -307,8 +309,13 @@
       s.token = "";
       saveSettings(s);
       updateConnPill();
+      refreshAllSyncStatus();
       closeSettings();
     });
+  }
+
+  function refreshAllSyncStatus(){
+    TABS.forEach(function(t){ setSyncStatus(t.id, hasWriteAccess() ? "idle" : "offline"); });
   }
 
   // ---------- seed loading (always from data/*.json — the shared source of truth) ----------
@@ -770,7 +777,9 @@
     wireFormModal();
     wireConfirmModal();
     wireSettings();
-    TABS.forEach(function(t){ setSyncStatus(t.id, "offline"); });
+    if (!hasWriteAccess()){
+      TABS.forEach(function(t){ setSyncStatus(t.id, "offline"); });
+    }
 
     var failed = [];
     var loaders = TABS.map(function(t){
