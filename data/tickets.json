@@ -28,7 +28,7 @@
     "title": "Migrate Service Bus DLQ monitors (Datadog -> Azure)",
     "status": "In Progress",
     "sprint": "",
-    "assignee": "Bilal Ansari",
+    "assignee": "Bilal",
     "notes": "General (Prod) + Lower Env (RC/Dev) done; CrmSync (Prod) remaining"
   },
   {
