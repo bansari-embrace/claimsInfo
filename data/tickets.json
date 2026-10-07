@@ -10,7 +10,7 @@
   },
   {
     "ticketId": "CLAIM-1566",
-    "title": "Service Bus DLQ alerting (Dev + RC)",
+    "title": "Alert for Automated Emails going into Dead Letter Queue",
     "status": "Done",
     "sprint": "",
     "owner": "Me",
