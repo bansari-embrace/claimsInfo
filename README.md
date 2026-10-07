@@ -8,14 +8,11 @@ A personal, single-page reference tool for Claims applications, database info, w
 - Each tab has **Add** (also used to Edit — click the pencil icon on a row), a delete (trash) icon, search, sortable columns, pagination (50 rows per page by default), and **Export JSON** / **Export CSV** buttons for manual backups.
 - **Delete is non-destructive**: it only hides the row from the table. The row stays in `data/*.json` (and in `Export JSON` output), so nothing is actually lost.
 
-## One-time setup: connect GitHub so saving works
+## One-time setup: connect access so saving works
 
-Click the gear icon in the top bar and set:
-1. **Owner/Repo** — `bansari-embrace/claimsInfo` (prefilled)
-2. **Branch** — `main` (prefilled)
-3. **Personal Access Token** — create a [fine-grained PAT](https://github.com/settings/personal-access-tokens/new) scoped to just this repo, with **Contents: Read and write** permission, and paste it in.
+Click the gear icon in the top bar and paste in an **Access Token** — create a [fine-grained PAT](https://github.com/settings/personal-access-tokens/new) scoped to just this repo, with **Contents: Read and write** permission.
 
-The token is stored only in that browser's `localStorage` — it's never committed or sent anywhere except directly to GitHub's API. Do this once per device/browser you use to edit. Without it, the page is still fully readable, but edits won't save anywhere.
+The token is stored only in that browser's `localStorage` — it's never committed or sent anywhere except directly to GitHub's API. Do this once per device/browser you use to edit. Without it, the page is still fully readable, but edits won't save anywhere. The top bar shows **Connected** / **Disconnected** depending on whether a token is set.
 
 ## Run locally
 

@@ -145,16 +145,14 @@
     var s = getSettings();
     var pill = document.getElementById("connPill");
     if (s.token){
-      pill.innerHTML = '<span class="dot"></span>Synced to ' + escapeHtml(s.owner + "/" + s.repo);
+      pill.innerHTML = '<span class="dot"></span>Connected';
     } else {
-      pill.innerHTML = '<span class="dot bad"></span>Not connected';
+      pill.innerHTML = '<span class="dot bad"></span>Disconnected';
     }
   }
 
   function openSettings(){
     var s = getSettings();
-    document.getElementById("gh-ownerrepo").value = s.owner + "/" + s.repo;
-    document.getElementById("gh-branch").value = s.branch || "main";
     document.getElementById("gh-token").value = s.token || "";
     document.getElementById("settingsOverlay").classList.add("open");
   }
@@ -169,14 +167,10 @@
     document.getElementById("connPill").addEventListener("click", openSettings);
     document.getElementById("gh-cancel").addEventListener("click", closeSettings);
     document.getElementById("gh-save").addEventListener("click", function(){
-      var ownerRepo = document.getElementById("gh-ownerrepo").value.trim();
-      var parts = ownerRepo.split("/");
-      var owner = (parts[0] || "").trim();
-      var repo = (parts[1] || "").trim();
-      var branch = document.getElementById("gh-branch").value.trim() || "main";
       var token = document.getElementById("gh-token").value.trim();
-      if (!owner || !repo) return;
-      saveSettings({owner: owner, repo: repo, branch: branch, token: token});
+      var s = getSettings();
+      s.token = token;
+      saveSettings(s);
       updateConnPill();
       refreshAllSyncStatus();
       closeSettings();

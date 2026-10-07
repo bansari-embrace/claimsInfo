@@ -64,12 +64,10 @@
 
 <div class="modal-overlay" id="settingsOverlay">
   <div class="modal-card small">
-    <h3>GitHub sync settings</h3>
-    <p>Changes are committed directly to this repo's <code class="mono">data/*.json</code> files, so everyone who opens this page sees the same data. Create a fine-grained Personal Access Token scoped to just this repo with <strong>Contents: Read and write</strong>, and paste it below &mdash; it's stored only in this browser, never committed anywhere.</p>
+    <h3>Connect Access</h3>
+    <p>Enter your access token to enable saving changes.</p>
     <div class="fields" style="grid-template-columns:1fr;">
-      <div><label>Owner / Repo</label><input id="gh-ownerrepo" placeholder="bansari-embrace/claimsInfo"></div>
-      <div><label>Branch</label><input id="gh-branch" placeholder="main"></div>
-      <div><label>Personal Access Token</label><input id="gh-token" type="password" placeholder="github_pat_&hellip;"></div>
+      <div><label>Access Token</label><input id="gh-token" type="password"></div>
     </div>
     <div class="modal-actions">
       <button class="btn" id="gh-disconnect">Disconnect</button>
