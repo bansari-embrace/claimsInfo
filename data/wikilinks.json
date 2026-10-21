@@ -23,5 +23,10 @@
     "title": "JIRA",
     "url": "https://embracepetinsurance.atlassian.net/jira/for-you?tab=assigned",
     "category": "Jira Portal"
+  },
+  {
+    "title": "CRM-PROD",
+    "url": "https://crm-prod.embracepetinsurance.com/",
+    "category": "Portal"
   }
 ]
