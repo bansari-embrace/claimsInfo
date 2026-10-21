@@ -63,5 +63,13 @@
     "sprint": "2026-Oct-19",
     "assignee": "Bilal",
     "notes": ""
+  },
+  {
+    "ticketId": "CLAIM-1621",
+    "title": "AiApps: Document Classifier is sending empty types",
+    "status": "Pending",
+    "sprint": "2026-Oct-19",
+    "assignee": "Bilal",
+    "notes": ""
   }
 ]
