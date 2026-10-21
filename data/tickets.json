@@ -43,7 +43,7 @@
   {
     "ticketId": "CLAIM-1595",
     "title": "Migrate Claims MH DataDog Monitors to Azure",
-    "status": "To Do",
+    "status": "Done",
     "sprint": "",
     "assignee": "Bilal",
     "notes": "Medical History Alert for Dev/RC/Prod"
