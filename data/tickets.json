@@ -55,5 +55,13 @@
     "sprint": "2026-Oct-19",
     "assignee": "Bilal",
     "notes": ""
+  },
+  {
+    "ticketId": "CLAIM-1647",
+    "title": "Epi.Ocr: Multiple Emails from fax-2989978@reply.fax2mail.com Combining into One Incoming Document File",
+    "status": "Development",
+    "sprint": "2026-Oct-19",
+    "assignee": "Bilal",
+    "notes": "https://embracepetinsurance.atlassian.net/browse/CLAIM-1647"
   }
 ]
