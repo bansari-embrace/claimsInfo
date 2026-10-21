@@ -18,5 +18,10 @@
     "title": "AzureDevOps",
     "url": "https://embracepetinsurance.visualstudio.com",
     "category": "DevOpsRepo"
+  },
+  {
+    "title": "JIRA",
+    "url": "https://embracepetinsurance.atlassian.net/jira/for-you?tab=assigned",
+    "category": "Jira Portal"
   }
 ]
